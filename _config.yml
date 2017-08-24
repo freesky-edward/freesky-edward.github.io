@@ -1,10 +1,10 @@
 # Site
-title:          JBlog
+title:          Edward
 bio:            'Just a simple Jekyll theme'
-description:    "JBlog is a minimal, one column and blue jekyll theme for your blog."
+description:    "this is Edward's blog."
 picture:        'assets/img/profile.png'
 locale:         en_US
-url:            https://alperenbozkurt.github.io/JBlog
+url:            https://freesky-edward.github.io/
 
 
 # Jekyll
