@@ -1,18 +1,31 @@
-# JBlog Jekyll Theme
+# This is Edward Lee's Blog
 
-**[JBlog](http://alperenbozkurt.net/JBlog)** is a simple jekyll theme.
+**[freesky-edward](http://github.com/freesky-edward)** is his github website.
 
-I have used this theme in my own php and ruby blogs. And there are some shortcomings. If something looks extremely ugly and you can't resist to fix it, just send me a PR. I will be grateful.
+Hi,
+Welcome to Edward's blog site.
 
-If you like this theme or using it, please give a **star** for motivation.
+## Bio-Edward
+I am an engineer focusing on storage domain, I have over 5 years experience in storage system development and design. 
+Now, I lead one team with servral engineers working on open source projects related OpenStack and Kubernetes. our main contribution is the storage related projects, such Cinder, Manila in OpenStack. Sig-storage in Kubernetes. we also started up one project named Kabor in OpenStack, now it's the official project that offer an orchestration of data protection.
+Before that, I have servral years working experience in storage system design and development. I joint the OceanStor 9000 design and development job in Huawei. also I was familiar with most of the sotrage systems of Huawei.
 
-## Preview
+## Main subjects
 
-![Home Page](/assets/img/screenshot-home.png)    
-![Post Page](/assets/img/screenshot-post.png)
+** Kubernetes
+** OpenStack
+** Golang
+** Cloud Storage
+** Cloud Native
 
-See a [live version of JBlog](http://alperenbozkurt.net/JBlog) hosted on GitHub.
+## Contact
 
-## Getting Started
+![Blog is here](https://freesky-edward.github.io)    
+![Twitter](https://www.twitter.com/EdwardL0086)
+![Email](mailto://freesky.edward@gmail.com)
 
-To learn how to install and use this theme check out the [Setup Guide](http://alperenbozkurt.net/JBlog/JBlog-theme/) for more information.
+Address: Chengdu City, Sichuan province, China, PR
+
+## other
+
+You are welcome to contribute my projects. also any suggestion, comments, questions are appriciated.
