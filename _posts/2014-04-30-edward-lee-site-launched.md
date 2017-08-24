@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Edward's blog site"
 date: 2017-08-24
 ---
