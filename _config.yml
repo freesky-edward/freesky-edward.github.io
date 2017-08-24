@@ -1,7 +1,7 @@
 # Site
-title:          Edward
+title:          freesky-edward
 bio:            'Just a simple Jekyll theme'
-description:    "this is Edward's blog."
+description:    "this is Edward Lee's blog."
 picture:        'assets/img/profile.png'
 locale:         en_US
 url:            https://freesky-edward.github.io/
@@ -24,7 +24,7 @@ sass:
 # Social
 # if you don't have any of social below, comment the line.
 #email:
-twitter: username
+twitter: https://twitter.com/EdwardL0086
 facebook: username
 #google:
   #plus: #username
