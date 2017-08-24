@@ -6,6 +6,6 @@ date: 2017-08-23
 
 ## Snapshot In Kubernetes
 
-I am start to research the snapshot[1] implementation in Kubernetes(k8s for shoter) these days, now I'd like to introduce the detailed process how k8s to support volume snapshot.
+I am starting to learn the snapshot[1] implementation in Kubernetes(k8s for shoter) from few days ago, now I'd like to introduce the detailed process how k8s to support volume snapshot.
 
-As you may know, k8s design all of model in it as an alone 
+As you may know.   .....
