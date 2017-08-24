@@ -1,39 +1,18 @@
-## Welcome Freesky-edward's Pages
+# JBlog Jekyll Theme
 
-You can use the [editor on GitHub](https://github.com/freesky-edward/freesky-edward.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+**[JBlog](http://alperenbozkurt.net/JBlog)** is a simple jekyll theme.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+I have used this theme in my own php and ruby blogs. And there are some shortcomings. If something looks extremely ugly and you can't resist to fix it, just send me a PR. I will be grateful.
 
-### Markdown
+If you like this theme or using it, please give a **star** for motivation.
 
-[2017-8-17](hello.md)
+## Preview
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+![Home Page](/assets/img/screenshot-home.png)    
+![Post Page](/assets/img/screenshot-post.png)
 
-```markdown
-Syntax highlighted code block
+See a [live version of JBlog](http://alperenbozkurt.net/JBlog) hosted on GitHub.
 
-# Header 1
-## Header 2
-### Header 3
+## Getting Started
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/freesky-edward/freesky-edward.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+To learn how to install and use this theme check out the [Setup Guide](http://alperenbozkurt.net/JBlog/JBlog-theme/) for more information.
