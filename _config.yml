@@ -4,7 +4,7 @@ bio:            'Just a simple Jekyll theme'
 description:    "this is Edward Lee's blog."
 picture:        'assets/img/edward-lee.jpg'
 locale:         en_US
-url:            https://freesky-edward.github.io/
+url:            https://freesky-edward.github.io
 
 
 # Jekyll
