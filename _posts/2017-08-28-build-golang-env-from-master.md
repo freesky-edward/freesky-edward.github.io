@@ -1,6 +1,8 @@
 ---
 layout: post
+date: 2017-08-28
 title: Setup Golang From Source
+url: /build-golang-env-from-master
 ---
 
 You may guess the main popurse of what I plan to say from the title,I think the main case is that if 
