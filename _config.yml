@@ -1,7 +1,7 @@
 # Site
 title:          freesky-edward
 bio:            'Just a simple Jekyll theme'
-description:    "this is Edward Lee's blog."
+description:    "This website is a technical blog site of cloud,storage,programming language..."
 picture:        'assets/img/edward-lee.jpg'
 locale:         en_US
 url:            https://freesky-edward.github.io
