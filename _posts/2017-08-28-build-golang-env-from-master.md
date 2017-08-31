@@ -12,7 +12,7 @@ you have to deal with.
 If you expect all your apps can change the golang verison in an easy way.or you want to know how to 
 build golang from source,here it is, my example is running on unbutu.
 
-### Preparing work 
+### preparing work 
 
 * install git and gcc
 
@@ -28,7 +28,7 @@ wget https://storage.googleapis.com/golang/go1.4.3.linux-amd64.tar.gz
 tar -xvf go1.4.3.linux-amd64.tar.gz -C /opt/go1.4
 ```
 
-* set the envronment variable in /etc/profile
+* set the environment variable in /etc/profile
 
 ```
 echo "export GOROOT_BOOTSTRAP=/home/go1.4" >> /etc/profile
