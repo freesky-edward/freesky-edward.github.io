@@ -6,9 +6,12 @@ Hi,
 Welcome to Edward's blog site.
 
 ## Bio-Edward
-I am an engineer focusing on storage domain, I have over 5 years experience in storage system development and design. 
-Now, I lead one team with servral engineers working on open source projects related OpenStack and Kubernetes. our main contribution is the storage related projects, such Cinder, Manila in OpenStack. Sig-storage in Kubernetes. we also started up one project named Kabor in OpenStack, now it's the official project that offer an orchestration of data protection.
-Before that, I have servral years working experience in storage system design and development. I joint the OceanStor 9000 design and development job in Huawei. also I was familiar with most of the sotrage systems of Huawei.
+
+Edward has nearly 10 years of R&D and Product experience in multiple fields, such as Big Data Analytics, Storage, cloud and so on.
+
+He is currently in charge of open source contribution, leading a research team with several engineers working in several projects e.g. Cinder,Manila,Swift, Kubernetes and so on
+
+Prior to that, Edward had over 5 years experience in storage system development and design. 4 years experience in data anlysis(BI) tool development. 
 
 ## Main subjects
 
