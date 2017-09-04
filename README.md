@@ -23,7 +23,7 @@ Prior to that, Edward had over 5 years experience in storage system development 
 
 ## Contact
 
-[Blog is here](https://freesky-edward.github.io)       
+[Blog is here](https://newto.me)       
 [Twitter](https://www.twitter.com/EdwardL0086)    
 [Email](mailto://freesky.edward@gmail.com)    
 Address: Chengdu City, Sichuan province, China, PR    
