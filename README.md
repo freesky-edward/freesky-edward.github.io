@@ -15,18 +15,18 @@ Prior to that, Edward had over 5 years experience in storage system development 
 
 ## Main subjects
 
-**Kubernetes
-**OpenStack
-**Golang
-**Cloud Storage
-**Cloud Native
+**Kubernetes    
+**OpenStack    
+**Golang    
+**Cloud Storage    
+**Cloud Native    
 
 ## Contact
 
-[Blog is here](https://freesky-edward.github.io)    
-[Twitter](https://www.twitter.com/EdwardL0086)
-[Email](mailto://freesky.edward@gmail.com)
-Address: Chengdu City, Sichuan province, China, PR
+[Blog is here](https://freesky-edward.github.io)       
+[Twitter](https://www.twitter.com/EdwardL0086)    
+[Email](mailto://freesky.edward@gmail.com)    
+Address: Chengdu City, Sichuan province, China, PR    
 
 ## other
 
