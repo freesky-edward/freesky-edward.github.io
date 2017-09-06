@@ -14,9 +14,9 @@
 @import url("https://fonts.googleapis.com/css?family=Bree+Serif");
 @import url("https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:900");
 
-$bg-blue: rgba(52, 152, 219, 1);
+$bg-blue: rgba(52, 152, 199, 1);
 $mainColor: #ecf0f1;
-$color2: rgba(52, 152, 219, .6);
+$color2: rgba(52, 152, 199, .6);
 
 body {
   background: $bg-blue;
@@ -258,7 +258,7 @@ body {
 }
 
 .yazibilgisi {
-  color: rgba(81, 81, 81, .4);
+  color: rgba(81, 81, 81, .6);
   font-size: 12px;
   float: right;
 	margin-right: 20px;

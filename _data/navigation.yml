@@ -3,8 +3,12 @@
 - title: Home
   url: /
 
-- title: Blogs
+- title: Blogs-EN
   url: /blog/
+
+
+- title: Blogs-CN
+  url: /blogcn/
 
 #- title: Projects
 #  url: /projects/
