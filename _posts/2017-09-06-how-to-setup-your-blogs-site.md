@@ -1,7 +1,7 @@
 ---
 layout: post
 lang: en
-title: "How To Set Up Your Own Blog Site"
+title: "how to set up your own blog site"
 date: 2017-09-06
 ---
 
@@ -15,18 +15,17 @@ There would be many ways you can take, the simplest way is to use github pages. 
 
 My solution is:
 
-*. Create GCP Instance.
-*. Build the web content base on a template.
-*. Run the web server on GCP cloud.
-*. Create a domain name and link to GCP instance address.
+- Create GCP Instance.     
+- Build the web content base on a template.    
+- Run the web server on GCP cloud.    
+- Create a domain name and link to GCP instance address.    
 
 the simplest logic map looks like:
-a domain(GoDaddy) --> a web server(Jekyll) --|--> the content(Jekyll theme)     
-                                             |--> VM instance(GCP)       
+a domain(GoDaddy) --> a web server(Jekyll) --> the content(Jekyll theme) --> VM instance(GCP)       
 
 ### Create GCP Instance 
 
-I don't want to talk much about how to get your server instance on GCP, the document on google site will give a very clear view of that, click [her](https://cloud.google.com/compute/docs/quickstart-linux). 
+I don't want to talk much about how to get your server instance on GCP, the document on google site will give a very clear view of that, click [here](https://cloud.google.com/compute/docs/quickstart-linux). 
 
 ### Build the web content
 
