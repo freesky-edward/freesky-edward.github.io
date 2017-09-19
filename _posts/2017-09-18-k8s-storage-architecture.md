@@ -10,7 +10,7 @@ Kuberenetes 存储架构总体介绍
 
 ### 说明
 
-本文只针对Kubernetes中的存储做介绍，需要对Kubernetes有基本的了解，主要包括其术语基于重要的核心组件等，如果你还不清楚，请先阅读[这里](https://kubernetes.io/docs/concepts/)
+本文只针对Kubernetes中的存储做介绍，需要对Kubernetes有基本的了解，主要包括基础术语以及重要的核心组件等，如果你还不清楚，请先阅读[这里](https://kubernetes.io/docs/concepts/)
 
 ### 架构概述
 
@@ -77,6 +77,10 @@ K8S里存储相关的组件，从顶层来讲，主要包含4大组件：
 VolumeManager相比ADController最大的区别是事件触发的来源，VolumeManager不会监听API Server，在Minion端所有的资源监听都是Kubelet完成的，Kubelet会监听到调度到该节点上的pod声明，会把pod缓存到Pod Manager中，VolumeManager通过Pod Manager获取PV/PVC的状态，并进行分析出具体的attach/detach, 操作然后调用plugin进行相应的业务处理，流程如下：
 
 ![]({{ site.url }}/images/2017-09-18-k8s-storage-architecture/k8s_arthitecture5.png)
+
+注：为了在attach卷上支持plugin headless形态，Controller Manager提供配置可以禁用ADController。
+
+对于mount/umount其流程和attach/detach类似，不再详细介绍，详细流程后续在专门介绍。这里需要说明一点的是如果是ControllerManager执行attach操作，当执行成功后需要通过API Server来刷新volume的实际状态，这样以保证Volume Manager的mount操作是在卷attach完成后执行。
    
 ### 结语
 
