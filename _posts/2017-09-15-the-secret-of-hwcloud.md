@@ -17,5 +17,5 @@ I got en error message that system told me either account frozen or not having s
 
 I had to ask help to the online support, then I got the secret that there is an account checker which will check whether your account has 100 RMB or more. if not, all the resource request will be refused. that's the cause of my trouble. it seems you cannot find the rule on the website.
 
-So, kindly reminder, if you are going to use hw cloud infrastruture, **more than 100 rmb in your account is must** it seems it's a secret of hw cloud.
+So, kindly remind, if you are going to use hw cloud infrastruture, **more than 100 rmb in your account is must** it seems it's a secret of hw cloud.
 

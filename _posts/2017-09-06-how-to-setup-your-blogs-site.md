@@ -31,21 +31,22 @@ I don't want to talk much about how to get your server instance on GCP, the docu
 
 It's helpful to take a look at how jekyll works before your start. jekyll is text transformation engine that produce the web content via combining the text writing in markup language e.g. markdown, texttile.. with the layout files. which has its own directories definitions. the basic structure will looks like:
 
---
-|--_config.yml    
-|--_data    
-|  |--XXXX.yml   
-|--_includes   
-|  |--head.html   
-|  |--footer.html   
-|--_layouts   
-|  |--default.html   
-|  |--post.html   
-|--_posts   
-|  |--2017-08-31-how-to-setup-your-website.md   
-|  |--2017-08-31-introduce-myself.md    
-|--_site    
-|--index.html    
+├─  _config.yml                              
+├─  _data          
+│   └── navigation.yml                      
+├─  _includes    
+│   ├── footer.html                         
+│   ├── head-home.html                      
+│   ├── head.html                           
+│   └── toc.html                            
+├─  index.html                               
+├─  _layouts    
+│   ├── home.html                           
+│   ├── page.html                           
+│   ├── post.html                           
+│   ├── post-index.html                     
+│   └── project.html                        
+└─  _posts     
 
 As the above showed,the index.html is the main page of the website. it alway provides the the guide page for your website.
 generally  _data directory will be used to config your other sub-page, each of sub-page can be a real page under _includes directory or text context under _post directory with layout descriptor under _layouts directory. 
