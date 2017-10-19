@@ -1,12 +1,12 @@
 ---
 layout: post
 lang: zh
-title: "kubernetes存储介绍系列 ——存储架构总览"
+title: "Kubernetes存储介绍系列 ——存储架构总览"
 date: 2017-09-18
 ---
 
 Kuberenetes 存储架构总体介绍
-==========================
+============================
 
 ### 说明
 
@@ -60,13 +60,13 @@ K8S里存储相关的组件，从顶层来讲，主要包含4大组件：
 
 ### 顶层逻辑流
 
-##### 卷管理流
+#### 卷管理流
 
 实现该流程的主要组件是PV Controller，PV Controller和K8S其它组件一样监听API Server中的资源更新，对于卷管理主要是监听PV，PVC， SC三类资源，当监听到这些资源的创建、删除、修改时，PV Controller经过判断是需要做创建、删除、绑定、回收等动作（后续会展开介绍内部逻辑），然后根据需要调用Volume Plugins进行业务处理，大致调用逻辑如下图：
 
 ![]({{ site.url }}/images/2017-09-18-k8s-storage-architecture/k8s_arthitecture3.png)
 
-##### 卷挂载
+#### 卷挂载
 
 卷的挂载，主要分两个阶段，attach/detach卷和mount/umount 卷，其中卷的attach/detach，前面已经说过了，有两个组件做这个工作，分别是Master上的AttachDetach Controller 和Minion上的VolumeManager，这两者在顶级流程上有一些区别。
 
@@ -85,3 +85,4 @@ VolumeManager相比ADController最大的区别是事件触发的来源，VolumeM
 ### 结语
 
 至此，K8S的存储大致组件架构和顶级流程就基本介绍完了，看似非常的简单，但是实际内部处理逻辑远比这个复杂，如：PV、PVC的绑定，Controller里期望状态与实际状态间的协调处理，多次操作归一化处理等等，后续分章节再展开进行介绍。
+

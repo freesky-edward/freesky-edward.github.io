@@ -1,9 +1,9 @@
- ---
- layout: post
- title:  K8S CSI plugin 设计
- lang: zh
- date: 2017-09-26
- ---
+---
+layout: post
+title:  Kubernetes存储介绍系列 ——CSI plugin设计
+lang: zh
+date: 2017-10-18
+---
 
 ### 说明
 
@@ -46,8 +46,6 @@ CSI是Container Storage Interface的简称，旨在能为容器编排引擎和�
 
 其中变化最大的是attach/detach逻辑，要理解这里的变化，除了了解顶级流程（参见[K8S存储架构](../k8s-storage-architecture)）外，需要对其中的AD Controller有深入的理解。注：对于Kubelet端的attach/detach流程是作为mount/unmount的前置步骤，流程是嵌入在mount/unmount中的，只会是调用，不会涉及大的变化，所以这里就直接略过了，想了解详情和看下这段[代码](https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/volumemanager/reconciler/reconciler.go#L192)
 
-#### AD Controller当前实现
-
 AD Controller中核心部件包括两个缓存，一个populator，一个reconciler，一个status updater。
 1. 两个缓存分别是desired status和actual status，分别代表跟attach/detach相关对象模型的期望状态和实际状态。
 2. reconciler通过定期比较期望状态和实际状态来决定是执行attach，还是detach，还是什么都不做。
@@ -65,11 +63,11 @@ AD Controller中核心部件包括两个缓存，一个populator，一个reconci
 
 了解了这个业务流程和相应内部部件职责后，剩下的就是读代码看细节了，这里就不做详细的介绍了，[代码路径](https://github.com/kubernetes/kubernetes/tree/master/pkg/controller/volume/attachdetach)，如有疑问，欢迎交流。
 
-对于AD Controller来讲，当reconciler检测要做相应的attach或者detach操作时，是直接通过调用volume plugin来实现，[K8S存储架构](../k8s-storage-architecture) 提到AD Controller是运行Master节点上，而在K8S里Master节点原则上是不运行容器的，那么将CSI Driver移植到容器里运行后，AD Controller调用CSI Driver就将变成跨节点调用，如果通过网络socket直接调用讲存在两个问题：1. 因为CSI Driver外置后，对于K8S进程来讲它其实是一个不可信逻辑单元，远程调用安全如何保证。2. 调用端如何确定，节点间直接调用也打破了K8S的逻辑架构。
+回到CSI设计上来，对于AD Controller来讲，当reconciler检测要做相应的attach或者detach操作时，是直接通过调用volume plugin来实现，[K8S存储架构](../k8s-storage-architecture) 提到AD Controller是运行Master节点上，而在K8S里Master节点原则上是不运行容器的，那么将CSI Driver移植到容器里运行后，AD Controller调用CSI Driver就将变成跨节点调用，如果通过网络socket直接调用讲存在两个问题：1. 因为CSI Driver外置后，对于K8S进程来讲它其实是一个不可信逻辑单元，远程调用安全如何保证。2. 调用端如何确定，节点间直接调用也打破了K8S的逻辑架构。
 
-而对于K8S设计来讲，Master执行完一段逻辑后触发Minion做相应的逻辑的设计太多，都是通过API Server内部接口更新状态的方式来设计，如前面提到的AD Controller执行完attach操作后通过node.Status.VolumesAttached通知Kubelet做mount操作。这里K8S CSI也沿用了这个设计方案。即AD Controller通过向API Server写入一个对象，在Node侧开启一个进程监听这类对象变化，当检测了有对象Add则执行attach操作，有对象delete则执行detach操作，具体参数则通过这个内部对象属性传递给minion。于是就引入了两个变化：
+而对于K8S设计来讲，Master执行完一段逻辑后触发Minion做相应的逻辑的设计太普遍，都是通过API Server内部接口更新状态的方式来设计，如前面提到的AD Controller执行完attach操作后通过node.Status.VolumesAttached通知Kubelet做mount操作。这里K8S CSI也沿用了这个设计方案。即AD Controller通过向API Server写入一个对象，在Minion侧开启一个进程监听这类对象变化，当检测了有对象Add则执行attach操作，有对象delete则执行detach操作，具体参数则通过这个内部对象属性传递给Minion。于是就引入了两个变化：
 1. 定义一个用于attach/detach的内部API对象
-2. 增加一个attach/detach的minion代理，负责监听1定义的对象变化，再调用本节点上CSI driver执行相应的操作。
+2. 增加一个attach/detach的Minion代理，负责监听1中定义的对象变化，再调用本节点上CSI driver执行相应的操作。
 于是就有了图2中右边部分的CSI Proxy Container，剩下的就是考虑这些部件间的通信机制打通。
 
 对于常规的非容器化方案，CSI Plugin运行在K8S核心部件里，CSI Plugin与CSI Driver之间通过grpc调用。K8S各部件间通过API Server进行通信，CSI Plugin如同K8S的核心部件拥有host上root权限，也不需要额外的通道处理，这种模式对于通信机制没有特殊诉求。
@@ -83,18 +81,19 @@ AD Controller中核心部件包括两个缓存，一个populator，一个reconci
 3. CSI Proxy Container 与CSI Driver Container之间通过本地socket通信。
 4. 由于CSI Driver Container需要在Host上做Mount操作，所以需要将操作目录作为卷提供给Container。
 
-至此，核心的设计已经介绍完，最后以几个图的形式来将三个核心流程呈现一下：
+这样这个流程也就能正常运转了，核心的设计已经介绍完，最后以几个图的形式来将三个核心流程呈现一下：
 
 1. provision/delete
+
 ![]({{ site.url }}/images/2017-10-18-k8s-csi-design/k8s-csi-design-pd.png)
 
-CSI proxy通过监听API Server到有PVC的Add/Delete操作后通过host到container的socket调用CSI接口，CSI Driver接收到调用后，调用存储设备实现卷的增删。
+CSI proxy通过监听API Server有PVC的Add/Delete操作后通过host与container的socket调用CSI接口，CSI Driver接收到调用后，调用存储设备实现卷的增删。
 
 2. attach/detach
 
 ![]({{ site.url }}/images/2017-10-18-k8s-csi-design/k8s-csi-design-ad.png)
 
-AD Controller监听API Server的pod，node状态判断是否进行attach/detach操作，如果需要进行，CSI Plugin则通过API Server创建/删除attachvolume. CSI Proxy Container中的attacher监听到API Server中attachvolume的增删后，通过本地socket调用另一个容器中的CSI Driver执行attach/detach操作（注意，CSI接口不是这个名称），CSI Driver再通过调用存储后端完成attach/detach操作。操作完成后，CSI Proxy Container更新attachvolume状态。
+AD Controller监听API Server的pod，node状态判断是否进行attach/detach操作，如果需要进行，CSI Plugin则通过API Server创建/删除attachvolume(内部API对象). CSI Proxy Container中的attacher监听到API Server中attachvolume的增删后，通过本地socket调用另一个容器中的CSI Driver执行attach/detach操作（注意，CSI接口不是这个名称），CSI Driver再通过调用存储后端完成attach/detach操作。操作完成后，CSI Proxy Container更新attachvolume状态。
 
 3. mount/unmount
 
@@ -102,5 +101,7 @@ AD Controller监听API Server的pod，node状态判断是否进行attach/detach�
 
 Kubelet判断需要做mount操作，通过Host到container的socket调用CSI Driver，CSI Driver在容器内部通过挂载到容器里的Mount Point卷进行bind mount操作。
 
+### 总结
 
+整体来看K8S CSI的设计与Flexvolume没有大的出入，整体架构保持不变，唯一差异较大的就是attach/detach流程。但正如一开始提到的，K8S后续将聚焦在容器集群支持应用上，存储应该整体外置，K8S目前为了兼容已有的存储架构，将attach/detach做得相对复杂了，如果是没有包袱的厂商，完全没有必要做这么复杂的一套设计，可以提前将存储相关的控制器外置到容器里，简化这么复杂的通信机制，只需提供一个机制告诉Kubelet存储ready即可。
 
