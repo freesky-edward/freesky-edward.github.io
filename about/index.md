@@ -1,22 +1,29 @@
 ---
 layout: page
-title: About the Theme
-tags: [about, Jekyll, theme, JBlog]
-date: 2016-03-21
+title: About this website 
+tags: [about, freesky, edward]
+date: 2017-08-21
 ---
+# This is Edward Lee's Blog
 
-![jekyll Image](http://dab1nmslvvntp.cloudfront.net/wp-content/uploads/2015/02/1424055625jekyll.png)
-{: .image-pull-right}
+**[freesky-edward](http://github.com/freesky-edward)** is his github website.
 
-<center><b>JBlog</b> is a simple jekyll theme.</center>
+## Bio-Edward
+I am an engineer focusing on storage domain, have over 5 years experience in storage system development and design. 
+Now, I lead one team with several engineers working on open source projects related OpenStack and Kubernetes. our main contribution is the storage related projects, such Cinder, Manila in OpenStack. Sig-storage in Kubernetes. 
 
-## About
+## Main subjects
 
-I have used this theme in my own php and ruby blogs. And there are some shortcomings. If something looks extremely ugly and you can't resist to fix it, just send me a PR. I will be grateful.
+* Kubernetes
+* OpenStack
+* Golang
+* Cloud Storage
+* Cloud Native
 
+## Contact
 
-If you like this theme or using it, please give a **star** for motivation.
+You can find them at the footer
 
-You want to **use it?**      
+## other
 
-[Install JBlog](https://github.com/alperenbozkurt/JBlog){: .btn .btn-info}
+Please feel free to contract me for anything.also any suggestion, comments, questions about this website will be appriciated.
