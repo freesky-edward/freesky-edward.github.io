@@ -26,7 +26,7 @@ gophercloud是OpenStack的Golang SDK包，第三方应用程序可以通过这�
 
 既然是要通过code调用API服务，那么肯定需要封装能访问这些API服务的client，在gophercloud中一共有两个client，分别代表了两个层次的client（严格上说是3个，这里有没有把http client这一层算作是gophercloud的client）。这两个client分别是[service-client](https://github.com/freesky-edward/gophercloud/blob/master/service_client.go)和[provider-client](https://github.com/freesky-edward/gophercloud/blob/master/provider_client.go)。大致关系如下：
 
-![]({{ site.url }}/images/2017-11-02-gophercloud-intro/clients_relationship.png)
+![]({{ site.url }}/images/2017-11-02-gophercloud-intro/clients-relationship.png)
 
 其中provider-client是service-client的一个generic implement，它是所有服务访问的基础client，provider-client主要是封装了http-client，构建http消息通过http-client发送，然后再处理返回消息以及异常。它的结构体声明如下：
 
@@ -78,6 +78,8 @@ type ProviderClient struct {
 // header will automatically be provided.
 func (client *ProviderClient) Request(method, url string, options *RequestOpts) (*http.Response, error) 
 ```
+
+Request方法通过对http client封装出提供对远端http服务的访问方法，该方法主要有三个参数，method，url，和options，method是指http请求的类型，如get，post，put，delete等，url是指访问远端的http资源路径，后面会简单介绍它的生成规则，options则是访问该远程服务提供的一些参数。
 
 基于provider-client，会衍生出各种服务client，如：计算服务client，存储服务client，鉴权服务client等等，这些服务clients并不是每一种服务定义了一个结构体，而是抽象成了一个结构体申明，那就是service-client.
 这里先介绍下service-client的内部，至于如果构建这些不同类型的服务client的，稍后介绍。
@@ -135,7 +137,7 @@ func NewBlockStorageV1(client *gophercloud.ProviderClient, eo gophercloud.Endpoi
 }
 ```
 
-在构建这些service-client时需要转入provider-client和EndpointOpts（后面介绍这个参数），而client工厂也提供provider-client的构建，见下：
+在构建这些service-client时需要转入provider-client和EndpointOpts（后面介绍这个参数），其中provider-client也可以通过client工厂进行构建，见下：
 
 ```golang
 A basic example of using this would be:
@@ -146,7 +148,7 @@ A basic example of using this would be:
 func NewClient(endpoint string) (*gophercloud.ProviderClient, error)
 ```
 
-通过上述这些工厂构建出相应的service-client，利用service-client的get，post，put，delete等方法，构建出相应的参数，就可以调用OpenStack的API了，具体每个OpenStack API的参数，请参见[这里](https://docs.openstack.org/pike/api/)，gophercloud针对各个服务需要的参数也定义成了相应的结构体，分别在https://github.com/freesky-edward/gophercloud/tree/master/openstack 的子目录下。如块存储的创建需要的参数定义在[CreateOpts](https://github.com/freesky-edward/gophercloud/blob/master/openstack/blockstorage/v2/volumes/requests.go#L17)里，并且封装了相应的方法，简要定义如下，详细参见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/blockstorage/v2/volumes/requests.go#L49)
+通过上述这些工厂构建出相应的service-client后，利用service-client的get，post，put，delete等方法，再加上相应的参数，就可以调用OpenStack的API了，具体每个OpenStack API的参数，请参见[这里](https://docs.openstack.org/pike/api/)，gophercloud针对各个服务需要的参数也定义了相应的结构体，分别在https://github.com/freesky-edward/gophercloud/tree/master/openstack 的子目录下。如创建块存储所的需要的参数定义在[CreateOpts](https://github.com/freesky-edward/gophercloud/blob/master/openstack/blockstorage/v2/volumes/requests.go#L17)里，并且封装了相应的方法，如创建块存储的方法定义如下，详细参见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/blockstorage/v2/volumes/requests.go#L49)
 
 ```golang
 // Create will create a new Volume based on the values in CreateOpts. To extract
@@ -165,7 +167,7 @@ func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r Create
 }
 ```
 
-这个方法的核心就是调用service-client的Post方法，只是由于rest的uri是/v3/{project_id}/volumes需要指定是volume操作，所以需要通过createURL(client)构建该URI.
+这个方法的核心就是调用service-client的Post方法，只是由于rest的uri是/v3/{project_id}/volumes需要指定是volume操作，所以需要通过createURL(client)构建该URI，具体构建规则后面会介绍.
 
 ```golang
 func createURL(c *gophercloud.ServiceClient) string {
@@ -173,20 +175,20 @@ func createURL(c *gophercloud.ServiceClient) string {
 }
 ```
 
-这样所有的对外接口就全呈现出来了，对于gophercloud的使用者来讲，首先通过client.NewClient构建一个provider-client，然后利用这个provider-client和EndpointOpts通过各个服务工厂方法（如块存储服务工厂client.NewBlockStorageV1）构建出service-client。最后使用这个service-client加上相应的调用参数就可以调用相应的服务业务接口了，如创建块存储func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder)。
+这样所有的对外接口就全呈现出来了，对于gophercloud的使用者来讲，首先通过client.NewClient构建一个provider-client，然后利用这个provider-client和EndpointOpts通过各个服务工厂方法（如块存储服务工厂client.NewBlockStorageV1）构建出service-client。最后使用这个service-client加上相应的调用参数就可以调用相应的服务接口了，如创建块存储func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder)。
 
 前面在介绍创建相应的service-client时，留有一个问题——EndpointOpts是啥？
 
-在介绍EndpointOpts之前，先说明一下，上述的主流程介绍中有一个细节需要再详细说明一下，在OpenStack里每个API服务都有自己endpoint，这个endpoint注册在keystone服务里，通过admin查看keystone的服务目录，大致结果如下图：
+在介绍EndpointOpts之前，就上述的主流程介绍中有一个细节需要再详细说明一下，在OpenStack里每个API服务都有自己endpoint，这个endpoint注册在keystone服务里，通过admin查看keystone的服务目录，大致结果如下图：
 
 ![]({{ site.url }}/images/2017-11-02-gophercloud-intro/service-catalog.png)
 
-在构建service-client时需要用到这个endpoint地址，在每次向OpenStack API发送rest请求时，需要根据这个endpoint来构建rest的uri，使用构建的这个uri通过provider的request发送请求。
+在构建service-client时需要用到这个endpoint地址，在每次向OpenStack API发送rest请求时，需要根据这个endpoint来构建rest的uri（前面有提到），最后将这个uri传给provider-client的request进行远端服务调用，那么如果创建这个uri的呢？
 
-如果获得这个endpoint就需要上面提到的EndpointOpts，在构建完成provider-client后，通过provider-client可以进行鉴权，调用client工厂的[Authenticate](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L99)方法。鉴权成功后，就可以获取到当前用户可以访问的API目录，以V3版本为例，详细代码见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L178)
+uri是基于上图中的endpoint加上子路径构成，如创建存储的uri是http://10.229.47.230/volume/v3/slob/volumes就是前面图中的endpoint+volumes构成的，要构建出这个uri，首先需要获得这个endpoint，要获得这个endpoint就需要上面提到的EndpointOpts，一般在构建完成provider-client后，通过调用client工厂的[Authenticate](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L99)方法进行鉴权，鉴权成功后，就可以获取到当前用户可以访问的API目录（服务目录），以V3版本为例，详细代码见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L178)
 
 ```golang
-v3Client, err := NewIdentityV3(client, eo)
+        v3Client, err := NewIdentityV3(client, eo)
 	if err != nil {
 		return err
 	}
@@ -220,7 +222,7 @@ v3Client, err := NewIdentityV3(client, eo)
 	}
 ```
 
-catalog, err := result.ExtractServiceCatalog()就是解析出相应的服务目录，获得服务目录后需要通过EndpointOpts来定义的参数进行过滤获得具体的服务endpoint，这里主要是根据region，服务提供的范围（上图中的Interface），详细代码见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/endpoint_location.go#L60):
+catalog, err := result.ExtractServiceCatalog()就是解析出相应的服务目录，获得服务目录后需要通过EndpointOpts来定义的参数进行过滤获得具体的服务endpoint，这里主要是根据region，服务提供的范围（上图中的Interface）进行过滤，详细代码见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/endpoint_location.go#L60):
 
 ```golang
 for _, entry := range catalog.Entries {
@@ -243,7 +245,7 @@ for _, entry := range catalog.Entries {
 	}
 ```
 
-而这个方法是在鉴权后保存在provider-client的EndpointLocator里，在client的工厂创建各个service-client时会根据这个方法得到endpoint，并将其注入到service-client的Endpoint里，代码请参见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L265):
+而这个过滤方法是在鉴权后保存在provider-client的EndpointLocator里，在client的工厂创建各个service-client时会调用这个方法得到endpoint，并将其注入到service-client的Endpoint里，代码请参见[这里](https://github.com/freesky-edward/gophercloud/blob/master/openstack/client.go#L265):
 
 ```golang
 func initClientOpts(client *gophercloud.ProviderClient, eo gophercloud.EndpointOpts, clientType string) (*gophercloud.ServiceClient, error) {
@@ -259,8 +261,25 @@ func initClientOpts(client *gophercloud.ProviderClient, eo gophercloud.EndpointO
 	return sc, nil
 }
 ```
+service-cliet在进行具体的服务调用时，会根据这里的endpoint来拼装uri（前面介绍的createURL），具体拼装逻辑封装在service-client
+的[ServiceURL](https://github.com/freesky-edward/gophercloud/blob/master/service_client.go#L32)方法里：
 
-所以EndpointOpts就是需要指定这个client是用于哪个region调用内部或者外部的API服务的一个结构体。
+```golang
+// ResourceBaseURL returns the base URL of any resources used by this service. It MUST end with a /.
+func (client *ServiceClient) ResourceBaseURL() string {
+	if client.ResourceBase != "" {
+		return client.ResourceBase
+	}
+	return client.Endpoint
+}
+
+// ServiceURL constructs a URL for a resource belonging to this provider.
+func (client *ServiceClient) ServiceURL(parts ...string) string {
+	return client.ResourceBaseURL() + strings.Join(parts, "/")
+}
+```
+
+所以EndpointOpts就是需要指定这个client是用于哪个region、那种服务范围（调用内部或者外部）的API服务的一个结构体，技术就是用来选择endpoint的。
 
 ### 总结
 
