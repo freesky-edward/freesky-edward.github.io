@@ -3,6 +3,7 @@ layout: post
 title:  "Using Terraform With OTC Cloud"
 lang: en
 date: 2018-04-10
+type: tech
 ---
 
 **Copyright belongs to huaweicloud, the address is: https://github.com/huaweicloud. the author is niuzhenguo**

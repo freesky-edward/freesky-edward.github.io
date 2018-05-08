@@ -3,6 +3,7 @@ layout: post
 title: "从另一个角度理解pod"
 date: 2017-09-07
 lang: zh
+type: tech
 ---
 
 从另一个视角理解POD

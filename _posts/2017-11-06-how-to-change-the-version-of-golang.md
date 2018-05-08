@@ -3,6 +3,7 @@ layout: post
 title:  "How to easily change the version of golang on Ubuntu"
 lang: en
 date: 2017-11-6
+type: tech
 ---
 
 ### Background Introduction

@@ -3,6 +3,7 @@ layout: post
 lang: zh
 title: "Kubernetes存储介绍系列 ——存储架构总览"
 date: 2017-09-18
+type: tech
 ---
 
 Kuberenetes 存储架构总体介绍

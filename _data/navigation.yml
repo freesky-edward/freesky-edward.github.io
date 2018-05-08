@@ -3,15 +3,18 @@
 - title: Home
   url: /
 
-- title: Blogs-EN
-  url: /blog/
+- title: Tech
+  url: /tech/
 
 
-- title: Blogs-CN
-  url: /blogcn/
+- title: Music
+  url: /music/
 
-#- title: Projects
-#  url: /projects/
+- title: Travels
+  url: /travel/
+
+- title: Others
+  url: /others/
 
 - title: Bio 
   url: /about/

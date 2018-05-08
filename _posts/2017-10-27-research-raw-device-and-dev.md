@@ -3,6 +3,7 @@ layout: post
 title:  "探秘namespace与/dev"
 lang: zh
 date: 2017-10-27
+type: tech
 ---
 
 ### 说明

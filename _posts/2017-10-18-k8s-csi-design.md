@@ -3,6 +3,7 @@ layout: post
 title:  Kubernetes存储介绍系列 ——CSI plugin设计
 lang: zh
 date: 2017-10-18
+type: tech
 ---
 
 ### 说明

@@ -3,6 +3,7 @@ layout: post
 title:  "How To Config Your Docker Networking Manually"
 date:   2017-08-26
 lang: en
+type: tech
 ---
 I am looking for the article to introduce the container network since I met many problem when deploy
 my kubernetes cluster. After I detected many blogs and books I found a way to config your docker network

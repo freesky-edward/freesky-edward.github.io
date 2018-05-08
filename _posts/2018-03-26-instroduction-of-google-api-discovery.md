@@ -3,6 +3,7 @@ layout: post
 title:  "Introduction of Google API discovery"
 lang: en
 date: 2018-03-26
+type: tech
 ---
 
 ### Concepts

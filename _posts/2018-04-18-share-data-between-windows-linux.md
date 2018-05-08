@@ -3,6 +3,7 @@ layout: post
 title:  "linux配置cifs共享"
 lang: zh
 date: 2018-04-10
+type: tech
 ---
 
 ### 准备

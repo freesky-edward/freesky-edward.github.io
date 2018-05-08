@@ -3,6 +3,7 @@ layout: post
 title:  "gophercloud简介--OpenStack golang SDK"
 lang: zh
 date: 2017-11-2
+type: tech
 ---
 
 ### gophercloud简介

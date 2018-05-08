@@ -3,6 +3,7 @@ layout: post
 title:  "Kubernetes存储介绍系列 —— AttachDetachController1"
 lang: zh
 date: 2017-10-19
+type: tech
 ---
 
 ### 说明

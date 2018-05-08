@@ -3,6 +3,7 @@ layout: post
 lang: en
 title: "how to set up your own blog site"
 date: 2017-09-06
+type: tech
 ---
 
 ## Brief
