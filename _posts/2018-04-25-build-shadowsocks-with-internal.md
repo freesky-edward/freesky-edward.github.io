@@ -14,6 +14,8 @@ lang: zh
 
 大致的网络架构图如下：
 
+![]({{ site.url }}/images/2018-04-25-build-shadowsocks-with-internal/topo.jpeg)
+
 #### 基础环境
 
 基本的网络结构是，用一台最小规格的centos服务器用于网关服务器，只是用于网络流量转发。购买EIP访问外部internet，局域网中的所有数据流量通过该服务器进行中转。
@@ -77,7 +79,7 @@ cp ./src/chinadns /usr/local/bin/
 
 ```
 chinadns -c ./chinadns-1.3.2/chnroute.txt \
- -m -p 5354 \
+ -m -p 5353 \ #这里的端口号要与前面配置dnsmasq一致 
  -s 114.114.114.114,127.0.0.1:5300 \
         1> /var/log/$NAME.log \
         2> /var/log/$NAME.err.log &
@@ -145,4 +147,82 @@ server-port: shadowsocks 服务端Ip地址
 password:  shadowsocks 服务访问密码
 5300是ss-tunnel本地监听端口
 
-### TODO
+### 配置转发
+
+#### 开启转发规则
+
+修改/etc/sysctl.conf
+
+```shell
+net.ipv4.ip_forward=1
+```
+
+重启服务
+
+```
+sysctl -p
+```
+
+#### 配置IPSET
+
+```
+curl -sL http://f.ip.cn/rt/chnroutes.txt | egrep -v '^$|^#' > cidr_cn
+sudo ipset -N cidr_cn hash:net
+for i in `cat cidr_cn`; do echo ipset -A cidr_cn $i >> ipset.sh; done
+chmod +x ipset.sh && sudo ./ipset.sh
+rm -f ipset.cidr_cn.rules
+sudo ipset -S > ipset.cidr_cn.rules
+sudo cp ./ipset.cidr_cn.rules /etc/ipset.cidr_cn.rules
+```
+
+#### 配置IPTables
+
+```
+iptables -t nat -N shadowsocks
+# 保留地址、私有地址、回环地址 不走代理
+iptables -t nat -A shadowsocks -d 0/8 -j RETURN
+iptables -t nat -A shadowsocks -d 127/8 -j RETURN
+iptables -t nat -A shadowsocks -d 10/8 -j RETURN
+iptables -t nat -A shadowsocks -d 169.254/16 -j RETURN
+iptables -t nat -A shadowsocks -d 172.16/12 -j RETURN
+iptables -t nat -A shadowsocks -d 192.168/16 -j RETURN
+iptables -t nat -A shadowsocks -d 224/4 -j RETURN
+iptables -t nat -A shadowsocks -d 240/4 -j RETURN
+# 以下IP为局域网内不走代理的设备IP
+iptables -t nat -A shadowsocks -s 10.0.0.111 -j RETURN
+# 发往shadowsocks服务器的数据不走代理，否则陷入死循环
+# 替换111.111.111.111为你的ss服务器ip/域名
+iptables -t nat -A shadowsocks -d  111.111.111.111 -j RETURN   
+
+# 大陆地址不走代理，因为这毫无意义，绕一大圈很费劲的
+iptables -t nat -A shadowsocks -m set --match-set cidr_cn dst -j RETURN
+# 其余的全部重定向至ss-redir监听端口1080(端口号随意,统一就行)
+iptables -t nat -A shadowsocks ! -p icmp -j REDIRECT --to-ports 1080
+# OUTPUT链添加一条规则，重定向至shadowsocks链
+iptables -t nat -A OUTPUT ! -p icmp -j shadowsocks
+iptables -t nat -A PREROUTING ! -p icmp -j shadowsocks
+```
+
+#### 配置默认网关
+
+有两种方式都可以：
+
+1. 修改默认的route关系
+
+```
+route del default
+route add default gw 10.0.0.111 eth0
+```
+
+注： eth0是网卡名称，不同环境可能不一样
+
+2. 增加一个NAT转发规则
+
+```
+iptables -t nat -A POSTROUTING -o eth0 -s 10.0.0.0/16 -j SNAT --to 10.0.0.111
+```
+
+
+### References:
+[1] https://medium.com/@oliviaqrs/%E5%88%A9%E7%94%A8shadowsocks%E6%89%93%E9%80%A0%
+E5%B1%80%E5%9F%9F%E7%BD%91%E7%BF%BB%E5%A2%99%E9%80%8F%E6%98%8E%E7%BD%91%E5%85%B3-fb82ccb2f729
