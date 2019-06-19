@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "how runc init the container——bootstrap分析"
+title: "runc source code——bootstrap分析"
 date: 2019-06-17
 type: tech
 ---
@@ -23,7 +23,9 @@ type: tech
 这是因为go runtime是多线程的，多线程进程不能通过setns来设置user namespace，所以必须要引用libcontainer的[nsenter](https://github.com/opencontainers/runc/tree/v1.0.0-rc8/libcontainer/nsenter)包使用cgo来设置namepace，引用地址：[https://github.com/opencontainers/runc/blob/v1.0.0-rc8/init.go#L8](https://github.com/opencontainers/runc/blob/v1.0.0-rc8/init.go#L8)
 cgo部分的主要逻辑在[nsexec](https://github.com/opencontainers/runc/blob/v1.0.0-rc8/libcontainer/nsenter/nsenter.go#L9)方法里，该方法的源代码位于[https://github.com/opencontainers/runc/blob/v1.0.0-rc8/libcontainer/nsenter/nsexec.c#L540](https://github.com/opencontainers/runc/blob/v1.0.0-rc8/libcontainer/nsenter/nsexec.c#L540)
 也正是这里对bootstrapdata进行处理，处理的流程大致如下：
+
 1. 从环境变量中获取到上文中提供socketpair的child的文件句柄号。
+
 ```
 /*
 *  If  we  don't  have  an  init  pipe,  just  return  to  the  go  routine.
@@ -33,12 +35,16 @@ pipenum  = initpipe();
 if (pipenum  ==  -1)
 return;
 ```
+
 2. 将bootstrapdata解析成nlconfig_t结构体
+
 ```
 /* Parse  all  of  the  netlink  configuration. */
 nl_parse(pipenum,  &config);
 ```
+
 3. 刷新out of memory 的人工评分值
+
 ```
 /* Set  oom_score_adj.  This  has  to  be  done  before  !dumpable  because
 *  /proc/self/oom_score_adj  is  not  writeable  unless  you're  an  privileged
@@ -48,7 +54,9 @@ nl_parse(pipenum,  &config);
 */
 update_oom_score_adj(config.oom_score_adj,  config.oom_score_adj_len);
 ```
+
 4. 初始化两个socketpair用于与该进程的子进程以及孙进程进行通信
+
 ```
 /* Pipe  so  we  can  tell  the  child  when  we've  finished  setting  up. */
 if (socketpair(AF_LOCAL,  SOCK_STREAM, 0,  sync_child_pipe)  < 0)
@@ -61,9 +69,11 @@ bail("failed  to  setup  sync  pipe  between  parent  and  child");
 if (socketpair(AF_LOCAL, SOCK_STREAM, 0, sync_grandchild_pipe) < 0)
 bail("failed  to  setup  sync  pipe  between  parent  and  grandchild");
 ```
+
 5. 使用setjmp, longjmp机制进行各项初始化。
 
 其中第四、五步是整个过程的关键，这里一共进行了两次clone，共有parent进程(实际为上文中的init进程)，child进程（从initclone而来）,init进程（实际是从child进行复制而来），每个进程的执行逻辑分别在对应switch case的三个case分支，关系如下：
+
 ```
 switch  (setjmp(env))  {
 case  JUMP_PARENT:  { //parent进程
@@ -80,17 +90,21 @@ case  JUMP_INIT:  {//init进程
    ...
 }
 ```
+
 三个进程间，parent与child使用sync_child_pipe socketpair进行通信，parent与init使用sync_grandchild_pipe socketpair进行通信。child与init间没有通信。
 
 parent进行：
 1. clone生成child进程
+
 ```
 /* Start  the  process  of  getting  a  container. */
 child  = clone_parent(&env,  JUMP_CHILD);
 if (child  < 0)
 bail("unable  to  fork:  child_func");
 ```
+
 2. 进入while循环处于与child间通信，直到child进行返回ready信号, 处理逻辑如下：
+
 ```
 while (!ready)  {
     switch (s)  {
@@ -114,7 +128,9 @@ while (!ready)  {
     }
 }
 ```
+
 3. 进入循环，处理与init进程交互，直到接收到ready信号
+
 ```
 while (!ready)  {
     //向init进程发送SYNC_GRANDCHILD信号
@@ -130,27 +146,36 @@ while (!ready)  {
 
 Child进程：
 4. 设置namespaces
+
 ```
 if (config.namespaces)
     join_namespaces(config.namespaces);
 ```
+
 5. unshare user
+
 ```
 if (unshare(CLONE_NEWUSER)  < 0)
     bail("failed  to  unshare  user  namespace");
 ```
+
 6. 向parent发送SYNC_USERMAP_PLS
+
 ```
 s = SYNC_USERMAP_PLS;
 if (write(syncfd,  &s, sizeof(s))  != sizeof(s))
     bail("failed to sync with parent: write(SYNC_USERMAP_PLS)  to  sync  with  parent:  write(SYNC_USERMAP_PLS)");
 ```
+
 7. set resource uid & ushare cgroup
 8. clone 生成init进行
+
 ```
 child  = clone_parent(&env,  JUMP_INIT);
 ```
+
 9. 向parent进程发送PID
+
 ```
 s  =  SYNC_RECVPID_PLS;
 if (write(syncfd,  &s, sizeof(s))  != sizeof(s))  {
@@ -163,7 +188,9 @@ if (write(syncfd,  &child, sizeof(child))  != sizeof(child))  {
     bail("failed to sync with parent: write(childpid)");
 }
 ``` 
+
 10. 向parent 发送ready信号后退出
+
 ```
 s  =  SYNC_CHILD_READY;
 if (write(syncfd,  &s, sizeof(s))  != sizeof(s))  {
@@ -176,13 +203,17 @@ exit(0);
 
 Init进程：
 1. 等待parent进程的SYNC_GRANDCHILD信号
+
 ```
 if (read(syncfd,  &s, sizeof(s))  != sizeof(s))
-    bail("failed to sync with parent: read(SYNC_GRANDCHILD) to sync with parent: read(SYNC_GRANDCHILD) to sync with parent: read(SYNC_GRANDCHILD)  to  sync  with  parent:  read(SYNC_GRANDCHILD)");
+    bail("failed to sync with parent: read(SYNC_GRANDCHILD) to sync with 
+    parent: read(SYNC_GRANDCHILD) to sync with parent: read(SYNC_GRANDCHILD)
+    to  sync  with  parent:  read(SYNC_GRANDCHILD)");
 
 if (s  !=  SYNC_GRANDCHILD)
     bail("failed  to  sync  with  parent:  SYNC_GRANDCHILD:  got %u",  s);
 ```
+
 2. 设置sid uid gid
 3. 向parent发送ready信号
 4. 释放config空间
