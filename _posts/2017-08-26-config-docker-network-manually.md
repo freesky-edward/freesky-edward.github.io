@@ -2,11 +2,8 @@
 layout: post
 title:  "How To Config Your Docker Networking Manually"
 date:   2017-08-26
-tag:
-- Edward 
-- Docker
-- Network
-- IP
+lang: en
+type: tech
 ---
 I am looking for the article to introduce the container network since I met many problem when deploy
 my kubernetes cluster. After I detected many blogs and books I found a way to config your docker network
@@ -75,4 +72,3 @@ quit the namespace bash via inputing 'exit' after all work is fine.
 
 please mark label it is from freesky-edward's blog if you plan to forward this blog, thanks a lot.
 {: .notice}
- 

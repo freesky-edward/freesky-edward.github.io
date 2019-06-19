@@ -1,0 +1,44 @@
+---
+layout : post-main
+---
+<script src="{{ site.url }}/js/APlayer.min.js"></script>
+{% for post in site.posts %}
+  {% if post.type == 'music' %}
+    <div class="yazi">
+      <div class="ustr" style="height:66px;">
+	{% if post.music == null %}
+        <h2><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h2>
+	{% endif %}
+        
+	<div class="yazibilgisi" style="padding-left:20px;">
+          published on {{ post.date | date_to_string }}.
+        </div>
+	
+	{% if post.music != null %}
+	    <div class="players">
+		    <div id="{{ post.url }}" class="aplayer" style="margin:0px;"></div>
+            </div>
+	    <script type="text/javascript">
+               {{ post.url | replace: '/', '' | replace: '-','' }} = new APlayer({
+		      element: document.getElementById('{{ post.url }}'),
+                  mini: false,
+                  autoplay: false,
+                  lrcType: false,
+                  mutex: true,
+                  preload: 'auto',
+		  theme: '#8cf0f1',
+                  audio: [{
+		      name: '{{ post.title }}',
+		      artist: '{{ post.author }}',
+		      url: '{{ post.music }}',
+	              cover: '',
+		      theme: '{{ post.theme }}'
+                  }]
+               });
+            
+            </script>
+	{% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}

@@ -1,0 +1,15 @@
+---
+layout: post-main
+---
+{% for post in site.posts %}
+  {% if post.type == null %}
+    <div class="yazi">
+      <div class="ustr">
+        <h2><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a></h2>
+        <div class="yazibilgisi">
+          published on {{ post.date | date_to_string }}.
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}

@@ -1,0 +1,57 @@
+---
+layout: travel-main
+---
+<script>     
+  function initMap() {
+	  var coor  = "{{ page.position }}"
+	  var uluru = {lat : Number(coor.split(",")[0]), lng: Number(coor.split(",")[1]) }
+	  //var uluru = {lat: 30.700, lng: 103.805};
+	      var map = new google.maps.Map(document.getElementById('home-header'), {
+		      zoom: 10,
+		      center: uluru
+	      });
+	      
+	      google.maps.event.addListener(map,'click',function(event){
+	         addBlog({
+			 loc: event.latLng
+		 })
+	      });
+
+	      function addBlog(props){
+		      var marker = new google.maps.Marker({
+			      position: props.loc,
+			      map: map
+		      });
+	      }
+
+	      var marker = new google.maps.Marker({
+		      position: uluru,
+		      map: map
+	      });
+      }
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key={{ site.maptoken }}&callback=initMap">
+</script>
+<div class="pan">
+<header id="home-header" style="position:absolute;">
+</header>
+<article>
+    <div class="ortalaAna" style="height:100%;width:100%;">
+      <div class="yazilar" style="height:100%;width:100%;">
+	      <div class="yazi" style="margin-top:0;height:100%;">
+		        <div class="ustr">
+				    <h2>{{ page.title }}</h2>
+				        <div class="yazibilgisi">
+						      published on {{ page.date | date_to_string }}.
+						          </div>
+							    </div>
+							      <hr>
+							        <div class="content">
+									    {{ content }}
+									      </div>
+	      </div>
+      </div>
+    </div>
+</article>
+</div>

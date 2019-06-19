@@ -3,11 +3,18 @@
 - title: Home
   url: /
 
-- title: Blogs
-  url: /blog/
+- title: Tech
+  url: /tech/
 
-#- title: Projects
-#  url: /projects/
+
+- title: Music
+  url: /music/
+
+- title: Travels
+  url: /travel/
+
+- title: Others
+  url: /others/
 
 - title: Bio 
   url: /about/

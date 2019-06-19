@@ -5,7 +5,7 @@ description:    "This website is a technical blog site of cloud,storage,programm
 picture:        'assets/img/edward-lee.jpg'
 locale:         en_US
 url:            http://newto.me
-
+maptoken: AIzaSyBZKdrygqLLM-cfalo0elv0ld8anA8cnTQ
 
 # Jekyll
 permalink:      /:title/
@@ -27,7 +27,7 @@ email: freesky.edward@gmail.com
 twitter: EdwardL0086
 facebook: freesky.edward
 google:
-  #plus: #username
+  plus: 110303731945711913882
   analytics: UA-105444004-1
   #verify:
   #ad-client:
