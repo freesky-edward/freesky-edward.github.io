@@ -72,7 +72,7 @@ bail("failed  to  setup  sync  pipe  between  parent  and  grandchild");
 
 5. 使用setjmp, longjmp机制进行各项初始化。
 
-其中第四、五步是整个过程的关键，这里一共进行了两次clone，共有parent进程(实际为上文中的init进程)，child进程（从initclone而来）,init进程（实际是从child进行复制而来），每个进程的执行逻辑分别在对应switch case的三个case分支，关系如下：
+其中第四、五步是整个过程的关键，这里一共进行了两次clone，共有parent进程，child进程（从parent clone而来）,init进程（实际是从child clone而来），每个进程的执行逻辑分别在对应switch case的三个case分支，关系如下：
 
 ```
 switch  (setjmp(env))  {
@@ -168,7 +168,7 @@ if (write(syncfd,  &s, sizeof(s))  != sizeof(s))
 ```
 
 7. set resource uid & ushare cgroup
-8. clone 生成init进行
+8. clone 生成init进程
 
 ```
 child  = clone_parent(&env,  JUMP_INIT);
