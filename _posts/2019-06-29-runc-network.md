@@ -59,7 +59,7 @@ lo        Link encap:Local Loopback
 
 这里是介绍第一点，因为他也是docker等网络设置的原理相似。假如host网络可以访问internet，那么runc通过默认的config.json配置出来的container实际与host间网络是隔离的，并且除了回路网卡外，没有网络配置，网络及host机器以及外界都是不通的，要想实现网络可访问，有两种选择：
 
-1. 不挂载network namespace
+A). 不挂载network namespace, 当使用rootless容器器，第二种方案由于权限问题，会导致无法连通网络，所以只能采用这种方式，这也是spec命令中如果--rootless后要移除network namespace的原因，代码见[这里](https://github.com/opencontainers/runc/blob/v1.0.0-rc8/libcontainer/specconv/example.go#L167)
 
 修改config.json, 去掉namespace中的network配置
 ```
@@ -133,11 +133,11 @@ lrwxrwxrwx 1 root root 0 Jun 29 18:15 uts -> uts:[4026531838]
 
 我们可以发现net的ID是一样的，也就是说容器与host间没有网络隔离。容器的网络配置将和host上一样，这样只要主机上能访问的网络，容器内部都能访问。
 
-2. 挂载一个已有网络已配置好的network namepace。配置好网络的访问。
+B). 挂载一个已有网络已配置好的network namepace。配置好网络的访问。
 
 这个相对来讲就要复杂一些，打通host与namespace间的网络，核心实现方式就是桥接。方法见下：
 
-1. 创建一个网卡runc0，并配置其地址为176.10.0.1
+1) 创建一个网卡runc0，并配置其地址为176.10.0.1
 
  ```
  sudo brctl addbr runc0
@@ -145,7 +145,7 @@ lrwxrwxrwx 1 root root 0 Jun 29 18:15 uts -> uts:[4026531838]
  sudo ip addr add 176.10.0.1/16 dev runc0
  ```
 
-2. 创建一个bridge，把其中的一段连接到runc0
+2) 创建一个bridge，把其中的一段连接到runc0
 
 ```
 sudo ip link add name veth-host type veth peer name veth-guest
@@ -153,7 +153,7 @@ sudo ip link add name veth-host type veth peer name veth-guest
  sudo brctl addif runc0 veth-host
 ```
 
-3. 创建一个名为runc的network namespace, 把bridge的另一端加入到runc中，然后重命名另一端名字为eth1, 配置上ip地址
+3) 创建一个名为runc的network namespace, 把bridge的另一端加入到runc中，然后重命名另一端名字为eth1, 配置上ip地址
 
 ```
  sudo ip netns add runc
