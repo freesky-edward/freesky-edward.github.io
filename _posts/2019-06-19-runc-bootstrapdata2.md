@@ -64,7 +64,7 @@ static  int  clone_parent(jmp_buf *env, int jmpval)
 3. 先clone user-ns, 再unshare other-ns
 
 第一种方案，必须要开启dump clone flags，这对于rootless container来讲将没法满足。
-第二种方案，unshare user-ns后，原来的进程由于进入了新namespace，将没有权限设置多个uid/gid map。
+第二种方案，unshare user-ns后，原来的进程由于进入了新namespace，将没有权限设置多个uid/gid map(uid, gid两个)。
 所以这里runc采用先clone在unshare的方式. 然而事实并不是就调用一下clone然后再unshare那么简单，因为要考虑使用已有namespace的问题。最后的逻辑是先clone，然后挂载已有namespace（见下说明），接着进入user namesapce，然后再unshare，注释如下：
 
 ```
