@@ -1,6 +1,8 @@
 ---
+layout: post
 title: "mailman on k8s -- idea "
 date: 2019-09-05
+lang: en
 type: tech
 ---
 
